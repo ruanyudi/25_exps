@@ -1,12 +1,14 @@
 import lightning
 import torch
-from torchmetrics.classification import Accuracy
+from torchmetrics.classification import Accuracy, ConfusionMatrix
 import torch.optim as optim
 import torch.nn as nn
 from lightning import LightningModule
 import torch.nn.functional as F
 from torchcam.methods import SmoothGradCAMpp
 from utils import instantiate
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 class BaseModule(LightningModule):
@@ -22,6 +24,9 @@ class BaseModule(LightningModule):
         self.train_acc = Accuracy(task="multiclass", num_classes=self.num_classes)
         self.val_acc = Accuracy(task="multiclass", num_classes=self.num_classes)
         self.test_acc = Accuracy(task="multiclass", num_classes=self.num_classes)
+        self.test_confmat = ConfusionMatrix(
+            task="multiclass", num_classes=self.num_classes
+        )
 
     def forward(self, x):
         features = self.backbone(x)
@@ -57,11 +62,23 @@ class BaseModule(LightningModule):
         acc = self.test_acc(logits, labels)
         self.log("test_loss", loss)
         self.log("test_acc", acc)
+        self.test_confmat.update(logits, labels)
         return loss
 
     def on_test_end(self):
         test_accuracy = self.test_acc.compute()
         self.test_acc.reset()
+        confmat = self.test_confmat.compute().cpu().numpy()
+        self.test_confmat.reset()
+
+        # 绘制混淆矩阵
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(confmat, annot=True, fmt="d", cmap="Blues")
+        plt.xlabel("Predicted Labels")
+        plt.ylabel("True Labels")
+        plt.title("Confusion Matrix")
+        plt.savefig("confusion_matrix.png")
+        plt.close()
 
     def configure_optimizers(self):
         optimizer = optim.Adam(
