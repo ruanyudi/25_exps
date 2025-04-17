@@ -84,6 +84,7 @@ class BaseModule(LightningModule):
         optimizer = optim.Adam(
             list(self.backbone.parameters()) + list(self.classifier.parameters()),
             lr=self.learning_rate,
+            betas=(0.9, 0.999),
         )
         return optimizer
 

@@ -15,11 +15,19 @@ def train(config):
         max_epochs=config.Parameters.max_epochs,
         log_every_n_steps=1,
     )
-    transform = torchvision.transforms.Compose(
+    train_transform = torchvision.transforms.Compose(
+        [
+            torchvision.transforms.RandomHorizontalFlip(),
+            torchvision.transforms.RandomRotation(10),
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Resize((32, 32)),
+        ]
+    )
+    test_transform = torchvision.transforms.Compose(
         [torchvision.transforms.ToTensor(), torchvision.transforms.Resize((32, 32))]
     )
-    train_dataset = MyDataset(transform, config.Datasets.train_path)
-    val_dataset = MyDataset(transform, config.Datasets.val_path)
+    train_dataset = MyDataset(train_transform, config.Datasets.train_path)
+    val_dataset = MyDataset(test_transform, config.Datasets.val_path)
     train_loader = DataLoader(
         train_dataset, batch_size=config.Datasets.Batch_size, shuffle=True
     )
