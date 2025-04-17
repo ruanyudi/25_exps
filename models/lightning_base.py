@@ -15,6 +15,26 @@ class BaseModule(LightningModule):
     def __init__(self, config):
         super(BaseModule, self).__init__()
         self.backbone = instantiate(config.Backbone, instantiate_module=False)()
+        if config.Backbone.use_pretrained:
+            pretrained_model = instantiate(config.Backbone.pretrained_model)
+            pretrained_dict = pretrained_model.state_dict()
+            model_dict = self.backbone.state_dict()
+
+            # 过滤掉不匹配的层（名称或形状不匹配）
+            pretrained_dict = {
+                k: v
+                for k, v in pretrained_dict.items()
+                if k in model_dict and v.shape == model_dict[k].shape
+            }
+            # print(pretrained_dict.keys())
+            # 更新当前模型的state_dict
+            model_dict.update(pretrained_dict)
+            print(pretrained_dict.keys())
+            self.backbone.load_state_dict(model_dict)
+            print("pretrained weights are loaded")
+        if config.Backbone.freeze:
+            for param in self.backbone.parameters():
+                param.requires_grad = False
         self.classifier = instantiate(config.Classifier, instantiate_module=False)(
             config
         )

@@ -7,7 +7,7 @@ from utils import parse_args
 from omegaconf import OmegaConf
 from models.lightning_base import BaseModule
 from datasets.MyDatasets import MyDataset
-
+from torchvision.datasets import ImageFolder
 
 def test(config, ckpt_path):
     model = BaseModule(config)
@@ -18,7 +18,8 @@ def test(config, ckpt_path):
     transform = torchvision.transforms.Compose(
         [torchvision.transforms.ToTensor(), torchvision.transforms.Resize((256, 256))]
     )
-    test_dataset = MyDataset(transform, config.Datasets.test_path)
+    test_dataset = ImageFolder(config.Datasets.test_path,transform=transform)
+    
     test_loader = DataLoader(
         test_dataset, batch_size=config.Datasets.Batch_size, shuffle=True
     )

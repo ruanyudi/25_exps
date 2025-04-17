@@ -1,12 +1,18 @@
 Backbone:
   module_name: models.resnet.ResNet
   class_name: resnet18
+  use_pretrained: True
+  pretrained_model:
+    module_name: torchvision.models
+    class_name: resnet18
+    pretrained: True
+  freeze: True
 
 Datasets:
   train_path: UCM/train
   val_path: UCM/val
   test_path: UCM/test
-  Batch_size: 1
+  Batch_size: 8
 
 Parameters:
   max_epochs: 100
