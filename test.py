@@ -16,7 +16,7 @@ def test(config, ckpt_path):
         log_every_n_steps=1,
     )
     transform = torchvision.transforms.Compose(
-        [torchvision.transforms.ToTensor(), torchvision.transforms.Resize((32, 32))]
+        [torchvision.transforms.ToTensor(), torchvision.transforms.Resize((256, 256))]
     )
     test_dataset = MyDataset(transform, config.Datasets.test_path)
     test_loader = DataLoader(

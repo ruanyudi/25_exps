@@ -3,10 +3,10 @@ Backbone:
   class_name: resnet18
 
 Datasets:
-  train_path: Brodatz/train
-  val_path: Brodatz/val
-  test_path: Brodatz/test
-  Batch_size: 32
+  train_path: UCM/train
+  val_path: UCM/val
+  test_path: UCM/test
+  Batch_size: 1
 
 Parameters:
   max_epochs: 100

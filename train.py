@@ -16,7 +16,7 @@ def train(config):
         log_every_n_steps=1,
     )
     transform = torchvision.transforms.Compose(
-        [torchvision.transforms.ToTensor(), torchvision.transforms.Resize((32, 32))]
+        [torchvision.transforms.ToTensor(), torchvision.transforms.Resize((256, 256))]
     )
     train_dataset = MyDataset(transform, config.Datasets.train_path)
     val_dataset = MyDataset(transform, config.Datasets.val_path)
