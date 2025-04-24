@@ -7,7 +7,7 @@
 
 ## 📂 目录结构
 ```
-Users/ruanyudi/Documents/刘新龙实验二
+Users/ruanyudi/Documents/实验二
 ├── .git/
 ├── .~卷积神经网络的图像分类实验报告模板.docx
 ├── Brodatz/
