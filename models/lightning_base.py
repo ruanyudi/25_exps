@@ -29,12 +29,13 @@ class BaseModule(LightningModule):
             # print(pretrained_dict.keys())
             # 更新当前模型的state_dict
             model_dict.update(pretrained_dict)
-            print(pretrained_dict.keys())
+            print(model_dict.keys())
             self.backbone.load_state_dict(model_dict)
             print("pretrained weights are loaded")
         if config.Backbone.freeze:
             for param in self.backbone.parameters():
                 param.requires_grad = False
+            print("backbone is frozen")
         self.classifier = instantiate(config.Classifier, instantiate_module=False)(
             config
         )

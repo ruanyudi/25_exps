@@ -1,97 +1,56 @@
-# 基于卷积神经网络的图像分类实验项目
+# ResNet50 迁移学习实验
 
-## 📜 项目概述
-本项目是一个基于卷积神经网络（CNN）的图像分类实验，支持使用 **LeNet** 和 **ResNet18** 作为骨干网络进行图像分类任务。项目使用 **PyTorch** 和 **PyTorch Lightning** 构建，包含数据加载、模型训练、验证和测试等完整流程。
+## 实验背景
+本实验基于PyTorch框架，使用ResNet50预训练模型进行迁移学习，实现对图像数据的分类任务。通过冻结Backbone层并自定义分类器，探索在小样本数据集上的模型适应能力。
 
----
-
-## 📂 目录结构
-```
-Users/ruanyudi/Documents/刘新龙实验二
-├── .git/
-├── .~卷积神经网络的图像分类实验报告模板.docx
-├── Brodatz/
-│   ├── test/
-│   ├── train/
-│   ├── val/
-│   └── val.txt
-├── README.md
-├── __pycache__/
-├── checkpoints/
-│   └── best_model.ckpt
-├── configs/
-│   ├── lenet.yaml
-│   └── resnet18.yaml
-├── datasets/
-│   ├── MyDatasets.py
-│   └── __pycache__/
-├── lightning_logs/
-│   ├── version_0/
-│   └── version_1/
-├── models/
-│   ├── LeNet/
-│   ├── __pycache__/
-│   ├── classifier.py
-│   ├── lightning_base.py
-│   └── resnet/
-├── move_imgs.py
-├── test.py
-├── train.py
-├── utils.py
-└── 基于卷积神经网络的图像分类实验报告模板.docx
-```
-
----
-
-## 💻 环境依赖
-本项目依赖以下环境与库：
-- Python 3.x
-- PyTorch
-- PyTorch Lightning
-- torchvision
-- omegaconf
-- matplotlib
-- seaborn
-- torchmetrics
-
-### ✅ 安装依赖
+## 环境要求
 ```bash
-pip install torch torchvision pytorch-lightning omegaconf matplotlib seaborn torchmetrics
+# 创建conda环境
+conda create -n resnet50 python=3.9
+conda activate resnet50
+
+# 安装核心依赖
+pip install torch torchvision pytorch-lightning omegaconf
 ```
 
----
+## 数据集准备
+1. 下载UCM数据集
+2. 按以下结构组织文件：
+```
+UCM/
+├── train/
+│   ├── class1/
+│   └── class2/
+├── val/
+└── test/
+```
 
-## 🚀 使用方法
+## 配置文件说明（configs/resnet50.yaml）
+```yaml
+Backbone:
+  module_name: models.resnet.ResNet
+  class_name: resnet50
+  use_pretrained: True   # 启用预训练权重
+  freeze: True           # 冻结Backbone层
 
-### 📃 配置文件
-项目提供了两种配置文件，可在 `configs` 文件夹中找到：
-- **configs/lenet.yaml**：使用 LeNet 模型
-- **configs/resnet18.yaml**：使用 ResNet18 模型
+Datasets:
+  train_path: UCM/train  # 训练集路径
+  Batch_size: 1          # 批大小
 
-可根据需要修改配置文件中的参数，如 **训练轮数、学习率、批量大小** 等。
+Parameters:
+  max_epochs: 100        # 最大训练轮次
+  learning_rate: 0.001   # 初始学习率
 
-### 🟢 训练模型
+Classifier:
+  num_classes: 10        # 输出类别数
+  in_features_dim: 2048  # Backbone输出维度
+```
+
+## 训练执行
 ```bash
-python train.py --config configs/resnet18.yaml
+python train.py --config configs/resnet50.yaml
 ```
-通过 `--config` 参数指定配置文件。
 
-### 🔵 测试模型
-```bash
-python test.py --config configs/resnet18.yaml --ckpt_path ./checkpoints/best_model.ckpt
-```
-- `--config`：指定配置文件
-- `--ckpt_path`：指定模型 checkpoint 文件
-
-### 🟡 绘制混淆矩阵
-测试阶段自动绘制混淆矩阵并保存为 `confusion_matrix.png`。
-
-
----
-
-## 🤝 贡献
-欢迎提交 **issue** 或 **pull request**，感谢您的支持与贡献！
-
----
-
-🎉 感谢使用本项目，希望对您的学习和研究有所帮助！
+## 参考文献
+1. [Deep Residual Learning for Image Recognition](https://arxiv.org/abs/1512.03385)
+2. [PyTorch Lightning Documentation](https://lightning.ai/docs/pytorch/stable/)
